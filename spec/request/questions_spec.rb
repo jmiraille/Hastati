@@ -3,19 +3,18 @@ describe 'Questions API', type: :request do
   let(:question) {create :question}
 
   #GET /questions
-  describe "GET /questions" do
+  describe "GET INDEX /questions" do
     before {get "/questions"}
     it "has HTTP status 200" do
       expect(response).to have_http_status 200
     end
     it "returns questions" do
       expect(json_body.size).to eq 9
-      byebug
     end
   end
 
   #GET /questions/:id
-  describe "GET /questions/:id" do
+  describe "GET SHOW /questions/:id" do
 
     context "when the record exists" do
       before {get "/questions/#{question.id}"}
@@ -34,25 +33,26 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 404
       end
       it "returns not found error message" do
-        expect(json_body['error']).to match /Could not find question with id:666/
+        expect(json_body['message']).to match /Could not find question with id:666/
       end
     end
   end
 
   # POST /questions
-  describe "POST /questions" do
-    let(:valid_attr) {{content: "How I bumb my rails version ?"}}
+  describe "POST CREATE /questions" do
+    let(:valid_attr) {{content: "How I create a question ?"}}
 
     context "when the request is valid" do
-      before {post "/questions", params: valid_attr}
 
       it "has a status code 201" do
-        expect(response).to have_status 201
+        post "/questions", params: valid_attr
+        expect(response).to have_http_status 201
       end
       it "create a question" do
-        expect{response}.to change(Question, :count).by 1
+        expect{post "/questions", params: valid_attr}.to change(Question, :count).by 1
       end
       it "return new question" do
+        post "/questions", params: valid_attr
         expect(json_body[:id]).to eq Question.last.id
       end
     end
@@ -64,13 +64,13 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 422
       end
       it "returns error message" do
-        expect(json_body['error']).to match /Could not create question record : content can't be blank/
+        expect(json_body['message']).to match /Could not create question record : content can't be blank/
       end
     end
   end
 
   # PUT /questions/:id
-  describe "PUT /questions/:id" do
+  describe "PUT UPDATE /questions/:id" do
     let(:valid_attr) {{content: 'How to test ?'}}
 
     context "when the record exists" do
@@ -94,7 +94,7 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 404
       end
       it "returns not found error message" do
-        expect(json_body['error']).to match /Could not find question with id:666/
+        expect(json_body['message']).to match /Could not find question with id:666/
       end
     end
 
@@ -114,7 +114,7 @@ describe 'Questions API', type: :request do
   end
 
   # DELETE /questions/:id
-  describe "DELETE /questions/:id" do
+  describe "DELETE  DESTROY /questions/:id" do
 
     context "when record exists" do
       before {delete "/questions/#{question.id}"}
@@ -138,7 +138,7 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 404
       end
       it "returns not found error message" do
-        expect(json_body['error']).to match /Could not find question with id:666/
+        expect(json_body['message']).to match /Could not find question with id:666/
       end
     end
   end
