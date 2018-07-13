@@ -18,7 +18,7 @@ class QuestionsController < ApplicationController
     if @question.save
       render json: @question, status: :created
     else
-      render json: {message: "Could not create question record : content can't be blank"}, status: :invalid_record
+      render json: {message: "Could not create question record : content can't be blank"}, status: :unprocessable_entity
     end
   end
 
@@ -28,7 +28,7 @@ class QuestionsController < ApplicationController
       if @question.update(question_params)
         head :no_content
       else
-        render json: {message: "Could not update question record : content can't be blank"}
+        render json: {message: "Could not update question record : content can't be blank"}, status: :unprocessable_entity
       end
     else
       render json: {message: "Could not find question with id:#{params[:id]}"}, status: :not_found

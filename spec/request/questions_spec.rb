@@ -53,7 +53,7 @@ describe 'Questions API', type: :request do
       end
       it "return new question" do
         post "/questions", params: valid_attr
-        expect(json_body[:id]).to eq Question.last.id
+        expect(json_body["id"]).to eq Question.last.id
       end
     end
 
@@ -64,7 +64,7 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 422
       end
       it "returns error message" do
-        expect(json_body['message']).to match /Could not create question record : content can't be blank/
+        expect(json_body["message"]).to match /Could not create question record : content can't be blank/
       end
     end
   end
@@ -80,7 +80,7 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 204
       end
       it "updates the record" do
-        expect{response}.to change(question.reload.content).to "How to test ?"
+        expect(question.reload.content).to eq "How to test ?"
       end
       it "return no content" do
         expect(response.body).to be_empty
@@ -94,21 +94,21 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 404
       end
       it "returns not found error message" do
-        expect(json_body['message']).to match /Could not find question with id:666/
+        expect(json_body["message"]).to match /Could not find question with id:666/
       end
     end
 
     context "with invalid params" do
-      before {put "questions/#{question.id}", params: {content: nil}}
+      before {put "/questions/#{question.id}", params: {content: nil}}
 
       it "has a HTTP code 204" do
-        expect(response).to have_http_status 204
+        expect(response).to have_http_status 422
       end
       it "do not update the record" do
-        expect{response}.to_not change(question.reload)
+        expect(question.reload.content).to eq "Question?"
       end
       it "return error message" do
-        expect(json_body).to match /Could not update question record : content can't be blank/
+        expect(json_body["message"]).to match /Could not update question record : content can't be blank/
       end
     end
   end
@@ -138,7 +138,7 @@ describe 'Questions API', type: :request do
         expect(response).to have_http_status 404
       end
       it "returns not found error message" do
-        expect(json_body['message']).to match /Could not find question with id:666/
+        expect(json_body["message"]).to match /Could not find question with id:666/
       end
     end
   end
