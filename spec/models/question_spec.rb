@@ -9,6 +9,6 @@ RSpec.describe Question, type: :model do
 
   it "require a content" do
     question.content = nil
-    expecr(question).to_not be_valid
+    expect(question).to_not be_valid
   end
 end
